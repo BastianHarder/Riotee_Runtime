@@ -1,0 +1,15 @@
+{
+    "opersys": "Win32",
+    "sdkRoot": "C:/Libraries/nRF5_SDK_17.1.0_ddde560",
+    "gnuInstallRoot": "C:/Program Files (x86)/Arm GNU Toolchain arm-none-eabi/12.2 rel1/bin/",
+    "files.associations": {
+        "type_traits": "c",
+        "nrf52840_bitfields.h": "c",
+        "nrf52840.h": "c",
+        "compare": "c",
+        "nrf_delay.h": "c",
+    },
+    "cortex-debug.variableUseNaturalFormat": false,
+    "editor.formatOnSave": true,
+    "jLinkServerPath": "C:/Program Files/SEGGER/JLink/JLinkGDBServerCL.exe",
+}

@@ -1,0 +1,47 @@
+{
+    "version": "2.0.0",
+    "options": {
+        "env": {
+            "GNU_INSTALL_ROOT": "${config:gnuInstallRoot}",
+            "SDK_ROOT": "${config:sdkRoot}"
+        }
+    },
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "make",
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceRoot}/_build"
+                ]
+            }
+        },
+        {
+            "label": "flash",
+            "type": "shell",
+            "command": "make flash",
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceRoot}/_build"
+                ]
+            }
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "command": "make clean",
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceRoot}/_build"
+                ]
+            }
+        },
+    ]
+}
