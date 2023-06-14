@@ -13,6 +13,9 @@
 #include "riotee_uart.h"
 #include "riotee_ble.h"
 #include "riotee_adc.h"
+#include "max2769.h"
+#include "riotee_spic.h"
+#include "riotee_spis.h"
 
 riotee_ble_ll_addr_t adv_address = {.addr_bytes = {0xBE, 0xEF, 0xDE, 0xAD, 0x00, 0x01}};
 
@@ -40,6 +43,19 @@ void reset_callback(void) {
   riotee_ble_init();
   riotee_ble_prepare_adv(&adv_address, "RIOTEE", 6, sizeof(ble_data));
   ble_data.counter = 0;
+
+  //Functions for batteryfree-gps from here on
+  //Initialize spi master 
+  riotee_spic_cfg_t spic_config;
+  spic_config.mode = SPIC_MODE0_CPOL0_CPHA0;
+  spic_config.frequency = SPIC_FREQUENCY_K500;
+  spic_init(&spic_config);
+  //Initialize for max2769 usage
+  max2769_init();
+  //Initialize spi slave for receiving serial data from max2769
+  riotee_spis_cfg_t spis_config;
+  spis_config.mode = SPIC_MODE1_CPOL0_CPHA1;    //Configure the SPI mode to Mode 1 and MSB First
+  spis_init(&spis_config);
 }
 
 void user_task(void *pvParameter) {
@@ -50,5 +66,12 @@ void user_task(void *pvParameter) {
     riotee_sleep_ms(500);
     riotee_ble_advertise(&ble_data, ADV_CH_ALL);
     ble_data.counter++;
+    //Functions for batteryfree-gps from here on
+    enable_max2769();
+    riotee_delay_us(200);
+    configure_max2769();
+    riotee_delay_us(800);
+    max2769_capture_snapshot(SNAPSHOT_SIZE_BYTES, snapshot_buf);
+    disable_max2769();
   }
 }

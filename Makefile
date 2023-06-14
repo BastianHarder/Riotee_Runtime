@@ -22,15 +22,18 @@ LIB_SRC_FILES += \
   $(SRC_DIR)/gpint.c \
   $(SRC_DIR)/uart.c \
   $(SRC_DIR)/spic.c \
+  $(SRC_DIR)/spis.c \
   $(SRC_DIR)/runtime.c \
 	$(SRC_DIR)/nvm.c \
 	$(SRC_DIR)/adc.c \
 	$(SRC_DIR)/stella.c \
+  $(SRC_DIR)/max2769.c \
   $(RTOS_DIR)/queue.c \
   $(RTOS_DIR)/list.c \
   $(RTOS_DIR)/tasks.c \
   $(RTOS_DIR)/event_groups.c \
-  $(RTOS_DIR)/portable/GCC/ARM_CM4F/port.c
+  $(RTOS_DIR)/portable/GCC/ARM_CM4F/port.c 
+
 
 APP_SRC_FILES += \
   $(SRC_DIR)/main.c
