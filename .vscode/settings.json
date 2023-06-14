@@ -9,7 +9,11 @@
         "compare": "c",
         "nrf_delay.h": "c",
         "nrf.h": "c",
-        "nrf_gpio.h": "c"
+        "nrf_gpio.h": "c",
+        "limits": "c",
+        "new": "c",
+        "riotee_spic.h": "c",
+        "riotee_spis.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": false,
     "editor.formatOnSave": true,

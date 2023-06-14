@@ -23,8 +23,8 @@ typedef struct {
   unsigned int pin_mosi;
 } riotee_spis_cfg_t;
 
-int spis_init(riotee_spis_cfg_t* cfg);
-int spis_receive(uint8_t *rx_buf, unsigned n_rx);
+int spis_init(const riotee_spis_cfg_t* cfg);
+int spis_receive(const riotee_spis_cfg_t* cfg, uint8_t *rx_buf, unsigned n_rx);
 
 #ifdef __cplusplus
 }

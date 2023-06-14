@@ -2,17 +2,47 @@
 #define __MAX2769_H_
 
 #include <stdint.h>
-#include "riotee.h"
 
-//define the length of the snapshots to be captured
-//For a 12ms snapshot and 4.092MHz sampling rate and 1Bit resolution:
-//Calculation: 4092000 Hz * 0.012s / 8 = 6138 Byte
-#define SNAPSHOT_SIZE_BYTES 6138
-//Global buffer to store snapshot
-extern uint8_t snapshot_buf[SNAPSHOT_SIZE_BYTES];
+typedef enum {
+  MAX2769_SAMPLING_FREQUENCY_M32 = 0b00,   // 32.736 MHz
+  MAX2769_SAMPLING_FREQUENCY_M16 = 0b11,   // 16.368 MHz
+  MAX2769_SAMPLING_FREQUENCY_M8 = 0b10,    // 8.184 MHz
+  MAX2769_SAMPLING_FREQUENCY_M4 = 0b01,    // 4.092 MHz
+} max2769_sampling_frequency_t;
 
-//MAX2769 Pin Definition
-#define PIN_POWER_ENABLE    PIN_D6        //This pin must be connected to power enable, nSHDN and nIDLE pins of max2769 eval board
+typedef enum {
+  MAX2769_ADC_RESOLUTION_1B = 0b000,   // 1 Bit
+  MAX2769_ADC_RESOLUTION_1B5 = 0b001,  // 1.5 Bit
+  MAX2769_ADC_RESOLUTION_2B = 0b010,   // 2 Bit
+  MAX2769_ADC_RESOLUTION_2B5 = 0b011,  // 2.5 Bit
+  MAX2769_ADC_RESOLUTION_3B = 0b100,   // 3 Bit
+} max2769_adc_resolution_t;
+
+typedef enum {
+  MAX2769_MIN_POWER_OPTION_ENABLE,     // configure max2769 registers for minimal power consumption
+  MAX2769_MIN_POWER_OPTION_DISABLE,    // configure max2769 registers with default values 
+}max2769_min_power_option_t;
+
+//structure definition to store max2769 related configuration
+typedef struct {
+  unsigned int snapshot_size_bytes;
+  max2769_sampling_frequency_t sampling_frequency;
+  max2769_adc_resolution_t adc_resolution;
+  max2769_min_power_option_t min_power_option;
+  unsigned int pin_pe;              //Pin that should be connected to nSHDW, nIDLE and power enable pin of power converters
+} max2769_cfg_t;
+
+//structure definition to track max2769 register status as max2769 registers cannot be read
+typedef struct {
+  uint32_t conf1_value;    
+  uint32_t conf2_value;  
+  uint32_t conf3_value; 
+  uint32_t pllconf_value;
+  uint32_t pllidr_value; 
+  uint32_t fdiv_value;   
+  uint32_t strm_value;   
+  uint32_t cfdr_value;
+} max2769_registers_t;
 
 /* MAX2769 Register addresses */
 // Name                      address         default value
@@ -116,29 +146,11 @@ extern uint8_t snapshot_buf[SNAPSHOT_SIZE_BYTES];
 #define  MAX2769_CFDR_SERCLK         ((uint8_t)(1))     /* Serializer Clock Selection */
 #define  MAX2769_CFDR_MODE           ((uint8_t)(0))     /* DSP Interface Mode Selection */
 
-//function prototypes
-void max2769_init();
-void enable_max2769();
-void disable_max2769();
-void configure_max2769();
-void max2769_capture_snapshot(unsigned int snapshot_size_bytes, uint8_t* snapshot_buf);
-void write_max2769_register(uint8_t address, uint32_t value);
-void select_lna1();
-void select_lna2();
-void enable_antenna_bias();
-void disable_antenna_bias();
-void set_refdiv_to_quarter();
-void set_refdiv_to_half();
-void select_one_bit_adc();
-void select_two_bit_adc();
-void reduce_lna1_current();
-void reduce_lna2_current();
-void reduce_lo_current();
-void reduce_mixer_current();
-void select_3order_butfilter();
-void reduce_vco_current();
-void reduce_pll_current();
-void enable_q_channel();
-void disable_q_channel();
+//User function prototypes
+void max2769_init(const max2769_cfg_t *cfg);
+void enable_max2769(const max2769_cfg_t *cfg);
+void disable_max2769(const max2769_cfg_t *cfg);
+void configure_max2769(const max2769_cfg_t *cfg);
+void max2769_capture_snapshot(const riotee_spis_cfg_t* spis_cfg, const max2769_cfg_t *max2769_cfg, uint8_t* snapshot_buf);
 
 #endif /* __MAX2769_H_ */

@@ -8,7 +8,7 @@
 
 TEARDOWN_FUN(spic_teardown_ptr);
 
-int spic_init(riotee_spic_cfg_t* cfg) {
+int spic_init(const riotee_spic_cfg_t* cfg) {
   NRF_SPIM3->PSEL.CSN = cfg->pin_cs;
   NRF_SPIM3->PSEL.MOSI = cfg->pin_copi;
   NRF_SPIM3->PSEL.MISO = cfg->pin_cipo;

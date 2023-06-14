@@ -38,7 +38,7 @@ typedef struct {
   unsigned int pin_cipo;
 } riotee_spic_cfg_t;
 
-int spic_init(riotee_spic_cfg_t* cfg);
+int spic_init(const riotee_spic_cfg_t* cfg);
 int spic_transfer(uint8_t* data_tx, size_t n_tx, uint8_t* data_rx, size_t n_rx);
 
 #ifdef __cplusplus

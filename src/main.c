@@ -13,11 +13,31 @@
 #include "riotee_uart.h"
 #include "riotee_ble.h"
 #include "riotee_adc.h"
-#include "max2769.h"
 #include "riotee_spic.h"
 #include "riotee_spis.h"
+#include "max2769.h"
+#include "snapshot_handler.h"
 
 riotee_ble_ll_addr_t adv_address = {.addr_bytes = {0xBE, 0xEF, 0xDE, 0xAD, 0x00, 0x01}};
+
+const static riotee_spic_cfg_t spic_cfg = {.mode = SPIC_MODE0_CPOL0_CPHA0,
+                                           .frequency = SPIC_FREQUENCY_K500,
+                                           .pin_cs = PIN_D8,
+                                           .pin_sck = PIN_D10,
+                                           .pin_copi = SPIC_PIN_UNUSED,
+                                           .pin_cipo = PIN_D9};
+
+const static riotee_spis_cfg_t spis_cfg = {.mode = SPIC_MODE1_CPOL0_CPHA1,
+                                           .pin_cs_out = PIN_D4,
+                                           .pin_cs_in = PIN_D5,
+                                           .pin_sck = PIN_D2,
+                                           .pin_mosi = PIN_D3};
+
+const static max2769_cfg_t max2769_cfg = {.snapshot_size_bytes = SNAPSHOT_SIZE_BYTES,
+                                          .sampling_frequency = MAX2769_SAMPLING_FREQUENCY_M4,
+                                          .adc_resolution = MAX2769_ADC_RESOLUTION_1B,
+                                          .min_power_option = MAX2769_MIN_POWER_OPTION_DISABLE,
+                                          .pin_pe = PIN_D7};
 
 static struct {
   uint32_t counter;
@@ -45,21 +65,12 @@ void reset_callback(void) {
   ble_data.counter = 0;
 
   //Functions for batteryfree-gps from here on
-  //Initialize spi master 
-  riotee_spic_cfg_t spic_config;
-  spic_config.mode = SPIC_MODE0_CPOL0_CPHA0;
-  spic_config.frequency = SPIC_FREQUENCY_K500;
-  spic_init(&spic_config);
-  //Initialize for max2769 usage
-  max2769_init();
+  //Initialize spi master to configure max2769
+  spic_init(&spic_cfg);
   //Initialize spi slave for receiving serial data from max2769
-  riotee_spis_cfg_t spis_config;
-  spis_config.mode = SPIC_MODE1_CPOL0_CPHA1;    //Configure the SPI mode to Mode 1 and MSB First
-  spis_config.pin_cs_out = PIN_D4;
-  spis_config.pin_cs_in = PIN_D5;
-  spis_config.pin_sck = PIN_D2;
-  spis_config.pin_mosi = PIN_D3;
-  spis_init(&spis_config);
+  spis_init(&spis_cfg);
+  //Initialize for max2769 usage
+  max2769_init(&max2769_cfg);
 }
 
 void user_task(void *pvParameter) {
@@ -71,11 +82,11 @@ void user_task(void *pvParameter) {
     riotee_ble_advertise(&ble_data, ADV_CH_ALL);
     ble_data.counter++;
     //Functions for batteryfree-gps from here on
-    enable_max2769();
+    enable_max2769(&max2769_cfg);
     riotee_delay_us(200);
-    configure_max2769();
+    configure_max2769(&max2769_cfg);
     riotee_delay_us(800);
-    max2769_capture_snapshot(SNAPSHOT_SIZE_BYTES, snapshot_buf);
-    disable_max2769();
+    //max2769_capture_snapshot(SNAPSHOT_SIZE_BYTES, snapshot_buf);
+    disable_max2769(&max2769_cfg);
   }
 }

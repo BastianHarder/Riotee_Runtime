@@ -28,6 +28,7 @@ LIB_SRC_FILES += \
 	$(SRC_DIR)/adc.c \
 	$(SRC_DIR)/stella.c \
   $(SRC_DIR)/max2769.c \
+  $(SRC_DIR)/snapshot_handler.c \
   $(RTOS_DIR)/queue.c \
   $(RTOS_DIR)/list.c \
   $(RTOS_DIR)/tasks.c \
