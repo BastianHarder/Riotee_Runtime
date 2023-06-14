@@ -7,7 +7,8 @@ EXTERN(vectors)
 
 MEMORY {
   FLASH (rx) : ORIGIN = 0x0, LENGTH = 512k
-  RAM (rwx) :  ORIGIN = 0x20000000, LENGTH = 128k
+  RAM_RETAINED (rwx) :  ORIGIN = 0x20000000, LENGTH = 8k
+  RAM (rwx) :  ORIGIN = 0x20002000, LENGTH = 120k
 }
 
 
@@ -55,7 +56,7 @@ SECTIONS {
         . = ALIGN(4);
         __etext = .;
 
-        .data : AT ( __etext ) {         /* AT specifies the LMA (load memory address) */
+        .data : {
                 /* Exclude all system variables from retained data */
                 . = ALIGN(4);
                 __data_start__ = .;
@@ -69,6 +70,7 @@ SECTIONS {
                 *shtc.c.o(.data .data.*)
                 *i2c.c.o(.data .data.*)
                 *spic.c.o(.data .data.*)
+                *adc.c.o(.data .data.*)
                 *nvm.c.o(.data .data.*)
                 *bma400.c.o(.data .data.*)
                 *gpint.c.o(.data .data.*)
@@ -102,12 +104,16 @@ SECTIONS {
                 KEEP(*(.jcr*))
                 /* All data end */
                 __data_end__ = .;
+
+        } >RAM AT>FLASH
+
+        .data_retained : {
                 . = ALIGN(4);
                 __data_retained_start__ = .;
                 *(.data)
                 *(.data.*)
                 __data_retained_end__ = .;
-        } >RAM
+        } >RAM_RETAINED AT>FLASH
 
         .bss (NOLOAD) : {
                 /* Exclude all system variables from retained data */
@@ -123,6 +129,7 @@ SECTIONS {
                 *shtc.c.o(.bss .bss.*)
                 *i2c.c.o(.bss .bss.*)
                 *spic.c.o(.bss .bss.*)
+                *adc.c.o(.bss .bss.*)
                 *nvm.c.o(.bss .bss.*)
                 *bma400.c.o(.bss .bss.*)
                 *gpint.c.o(.bss .bss.*)
@@ -135,14 +142,19 @@ SECTIONS {
                 *(.teardown)
                 __teardown_end__ = .;
                 __bss_end__ = .;
+        } >RAM
+
+        .bss_retained (NOLOAD) : {
                 . = ALIGN(4);
                 __bss_retained_start__ = .;
                 *(COMMON)
                 *(.bss)
+                *(.retained_bss)
                 *(.bss.*)
                 __bss_retained_end__ = .;
-
-        } >RAM
+                . = ALIGN(4);
+                *(.usr_task_mem)
+        } >RAM_RETAINED
 
     
 }

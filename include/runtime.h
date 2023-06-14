@@ -7,6 +7,8 @@
 #define UNUSED_VARIABLE(X) ((void)(X))
 #define UNUSED_PARAMETER(X) UNUSED_VARIABLE(X)
 
+#define USR_STACK_SIZE_WORDS (1024)
+
 int runtime_init(void);
 void runtime_start(void);
 
@@ -31,8 +33,15 @@ enum {
   EVT_PWRGD_H = 0xA001,
 };
 
+typedef struct {
+  unsigned int n_reset;
+  unsigned int n_turnoff;
+} runtime_stats_t;
+
 extern TaskHandle_t usr_task_handle;
 extern TaskHandle_t sys_task_handle;
+
+extern runtime_stats_t runtime_stats;
 
 #define TEARDOWN_FUN(x) void (*x)() __attribute__((section(".teardown")))
 
