@@ -55,6 +55,10 @@ void reset_callback(void) {
   //Initialize spi slave for receiving serial data from max2769
   riotee_spis_cfg_t spis_config;
   spis_config.mode = SPIC_MODE1_CPOL0_CPHA1;    //Configure the SPI mode to Mode 1 and MSB First
+  spis_config.pin_cs_out = PIN_D4;
+  spis_config.pin_cs_in = PIN_D5;
+  spis_config.pin_sck = PIN_D2;
+  spis_config.pin_mosi = PIN_D3;
   spis_init(&spis_config);
 }
 
