@@ -24,8 +24,8 @@ const static riotee_spic_cfg_t spic_cfg = {.mode = SPIC_MODE0_CPOL0_CPHA0,
                                            .frequency = SPIC_FREQUENCY_K500,
                                            .pin_cs = PIN_D8,
                                            .pin_sck = PIN_D10,
-                                           .pin_copi = SPIC_PIN_UNUSED,
-                                           .pin_cipo = PIN_D9};
+                                           .pin_copi = PIN_D9,
+                                           .pin_cipo = SPIC_PIN_UNUSED};
 
 const static riotee_spis_cfg_t spis_cfg = {.mode = SPIC_MODE1_CPOL0_CPHA1,
                                            .pin_cs_out = PIN_D4,
@@ -68,7 +68,7 @@ void reset_callback(void) {
   //Initialize spi master to configure max2769
   spic_init(&spic_cfg);
   //Initialize spi slave for receiving serial data from max2769
-  spis_init(&spis_cfg);
+  //spis_init(&spis_cfg);
   //Initialize for max2769 usage
   max2769_init(&max2769_cfg);
 }

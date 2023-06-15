@@ -31,6 +31,7 @@ static const size_t n_tx = 4;       //number of bytes to be transmitted to max27
 static const size_t n_rx = 0;       //no data is expected to be received from max2769
 
 //global structure to track max2769 register status as max2769 registers cannot be read
+//This initialization is not working!!!
 static max2769_registers_t max2769_reg =  {.conf1_value = MAX2769_CONF1_DEF,
                                            .conf2_value = MAX2769_CONF2_DEF,
                                            .conf3_value = MAX2769_CONF3_DEF,
@@ -44,6 +45,14 @@ static max2769_registers_t max2769_reg =  {.conf1_value = MAX2769_CONF1_DEF,
 //This functions should be executed once after system reset
 void max2769_init(const max2769_cfg_t *cfg)
 { 
+    max2769_reg.conf1_value = MAX2769_CONF1_DEF;
+    max2769_reg.conf2_value = MAX2769_CONF2_DEF;
+    max2769_reg.conf3_value = MAX2769_CONF3_DEF;
+    max2769_reg.pllconf_value = MAX2769_PLLCONF_DEF;
+    max2769_reg.pllidr_value = MAX2769_PLLIDR_DEF;
+    max2769_reg.fdiv_value = MAX2769_FDIV_DEF;
+    max2769_reg.strm_value = MAX2769_STRM_DEF;
+    max2769_reg.cfdr_value = MAX2769_CFDR_DEF;
     //configure pin used for max2769 power_enable, shutdown_n and idle_n and set it low to keep the device off
 	nrf_gpio_cfg_output(cfg->pin_pe);
 	nrf_gpio_pin_clear(cfg->pin_pe);
@@ -105,6 +114,7 @@ static void write_max2769_register(uint8_t address, uint32_t value)
     tx_buf[3] = (uint8_t) ((value & 0x0000000F) << 4);
     //register address is located in bits 3 downto 0 (lower nibble of fourth byte)
     tx_buf[3] = (tx_buf[3] & 0xF0) + (address & 0x0F);
+    printf_("SPI Data in Driver: %x, %x, %x, %x \n", tx_buf[0], tx_buf[1], tx_buf[2], tx_buf[3]);
     spic_transfer(tx_buf, n_tx, rx_buf, n_rx);
 }
 
@@ -112,9 +122,12 @@ static void write_max2769_register(uint8_t address, uint32_t value)
 static void set_sampling_frequency(const max2769_cfg_t *cfg)
 {
     //clear bits that correspond to the reference divider value
+    printf_("pllconf_value default value: %x \n", max2769_reg.pllconf_value);
     max2769_reg.pllconf_value &= ~(0b11 << MAX2769_PLL_REFDIV);
+    printf_("pllconf_value with deleted refdiv bits: %x \n", max2769_reg.pllconf_value);
     //write bits corresponding to the reference divider according to specification of sampling frequency
-    max2769_reg.pllconf_value |= (cfg->sampling_frequency << MAX2769_PLL_REFDIV);  
+    max2769_reg.pllconf_value |= (cfg->sampling_frequency << MAX2769_PLL_REFDIV); 
+    printf_("pllconf_value with configured refdiv bits: %x \n", max2769_reg.pllconf_value); 
     write_max2769_register(REG_MAX2769_PLLCONF, max2769_reg.pllconf_value);
 }
 
@@ -122,9 +135,12 @@ static void set_sampling_frequency(const max2769_cfg_t *cfg)
 static void set_adc_resolution(const max2769_cfg_t *cfg)
 {
     //clear bits that correspond to the adc resolution
-    max2769_reg.conf2_value &= ~(0b111 << MAX2769_CONF2_BITS);    
+    printf_("conf2_value default value: %x \n", max2769_reg.conf2_value); 
+    max2769_reg.conf2_value &= ~(0b111 << MAX2769_CONF2_BITS);   
+    printf_("conf2_value with deleted adc_res bits: %x \n", max2769_reg.conf2_value); 
     //write bits that correspond to the adc resolution according to specification of adc resolution                 
     max2769_reg.conf2_value |= (cfg->adc_resolution << MAX2769_CONF2_BITS);   
+    printf_("conf2_value with deleted adc_res bits: %x \n", max2769_reg.conf2_value); 
     write_max2769_register(REG_MAX2769_CONF2, max2769_reg.conf2_value);
 }
 

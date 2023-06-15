@@ -5,6 +5,7 @@
 #include "task.h"
 #include "runtime.h"
 #include "riotee.h"
+#include "printf.h"
 
 TEARDOWN_FUN(spic_teardown_ptr);
 
@@ -64,7 +65,7 @@ void SPIM3_IRQHandler(void) {
 
 int spic_transfer(uint8_t* data_tx, size_t n_tx, uint8_t* data_rx, size_t n_rx) {
   unsigned long notification_value;
-
+  printf_("SPI Data in Driver: %x, %x, %x, %x \n", data_tx[0], data_tx[1], data_tx[2], data_tx[3]);
   taskENTER_CRITICAL();
   NRF_SPIM3->ENABLE = (SPIM_ENABLE_ENABLE_Enabled << SPIM_ENABLE_ENABLE_Pos);
 
