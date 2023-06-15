@@ -31,7 +31,7 @@ static const size_t n_tx = 4;       //number of bytes to be transmitted to max27
 static const size_t n_rx = 0;       //no data is expected to be received from max2769
 
 //global structure to track max2769 register status as max2769 registers cannot be read
-//This initialization is not working!!!
+//This initialisation does not work!!! Initialisation is done again in max2769_init(..)
 static max2769_registers_t max2769_reg =  {.conf1_value = MAX2769_CONF1_DEF,
                                            .conf2_value = MAX2769_CONF2_DEF,
                                            .conf3_value = MAX2769_CONF3_DEF,
@@ -41,7 +41,7 @@ static max2769_registers_t max2769_reg =  {.conf1_value = MAX2769_CONF1_DEF,
                                            .strm_value = MAX2769_STRM_DEF,
                                            .cfdr_value = MAX2769_CFDR_DEF};
 
-//Function that configures all pins that are connected to max2769 
+//Function that configures all gpios that are connected to max2769 
 //This functions should be executed once after system reset
 void max2769_init(const max2769_cfg_t *cfg)
 { 

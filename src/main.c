@@ -77,16 +77,17 @@ void user_task(void *pvParameter) {
   UNUSED_PARAMETER(pvParameter);
   for (;;) {
     wait_until_charged();
-    led_blink(250);
-    riotee_sleep_ms(500);
-    riotee_ble_advertise(&ble_data, ADV_CH_ALL);
-    ble_data.counter++;
+    //led_blink(250);
+    //riotee_sleep_ms(500);
+    //riotee_ble_advertise(&ble_data, ADV_CH_ALL);
+    //ble_data.counter++;
     //Functions for batteryfree-gps from here on
     enable_max2769(&max2769_cfg);
-    riotee_delay_us(200);
+    //wait_until_charged();
     configure_max2769(&max2769_cfg);
-    riotee_delay_us(800);
+    //riotee_delay_us(800);
     //max2769_capture_snapshot(SNAPSHOT_SIZE_BYTES, snapshot_buf);
     disable_max2769(&max2769_cfg);
+    //riotee_delay_us(10);
   }
 }
